@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {CdkTextareaAutosize} from '@angular/cdk/text-field';
+import {Component, OnInit, NgZone, ViewChild} from '@angular/core';
+import {take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-contact',
@@ -7,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContactComponent implements OnInit {
 
+  @ViewChild('autosize') autosize: CdkTextareaAutosize;
+
+
   optionsSelect: Array<any>;
 
-  constructor() { }
+  constructor(private ngZone: NgZone) { }
 
   ngOnInit() {
     this.optionsSelect = [
@@ -18,6 +23,12 @@ export class ContactComponent implements OnInit {
       { value: 'Feature request', label: 'Feature request' },
       { value: 'Other stuff', label: 'Other stuff' },
     ];
+  }
+
+  triggerResize() {
+    // Wait for changes to be applied, then trigger textarea resize.
+    this.ngZone.onStable.pipe(take(1))
+        .subscribe(() => this.autosize.resizeToFitContent(true));
   }
 
 }
